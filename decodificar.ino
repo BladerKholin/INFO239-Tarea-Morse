@@ -47,7 +47,7 @@ void loop()
 		
   */
   // Opcion 2
-  for (int j = 0; j < 3 ; j++)
+  for (int j = 0; j < 5 ; j++){
     for(int i = 0; i < 26;i++){
       if(texto[j] == morse[i]){
         Serial.println(letras[i]);
@@ -56,5 +56,6 @@ void loop()
 
     }
     delay(500);
+  }
 
 }
