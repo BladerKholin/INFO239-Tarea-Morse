@@ -1,0 +1,7 @@
+{
+    "port": "COM6",
+    "configuration": "cpu=atmega328",
+    "board": "arduino:avr:diecimila",
+    "programmer": "avrisp",
+    "sketch": "esclavo.ino"
+}
