@@ -17,6 +17,4 @@ void loop() {
   Wire.endTransmission();    // Finalizar transmisión
 
   Serial.println(buttonState); // Imprimir el estado del botón para depuración
-
-  delay(500); // Esperar un poco antes de la siguiente lectura
 }
