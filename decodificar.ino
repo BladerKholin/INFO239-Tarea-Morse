@@ -39,7 +39,7 @@ void loop()
   /*
   for(int i = 0; i < 26;i+=2){
     if(texto == decodifica[i]){
-      Serial.println(decodificar[i+1]);
+      Serial.println(decodifica[i+1]);
       break;
       }
     }
