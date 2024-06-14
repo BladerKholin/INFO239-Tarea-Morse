@@ -50,7 +50,7 @@ void loop() {
 void decodificar (){
   
     for(int i = 0; i < 26;i++){
-      if(texto == morse[i]){
+      if(receivedString == morse[i]){
         Serial.print(letras[i]);
         break;
       }
