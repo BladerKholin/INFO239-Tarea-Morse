@@ -3,13 +3,15 @@
 int buttonState; // Variable para almacenar el estado del botón recibido
 int pointTime = 200;
 int timeDelta = 50;
+bool pressed = false; bool isAChar = false;
+char palabra[5] = "";
 
-bool presionado = false;
 int startPressed, endPressed, startSpace, endSpace = 0;
 
 void setup() {
   Wire.begin(8);            // Iniciar como esclavo con dirección 8
   Wire.onReceive(receiveEvent); // Registrar función de recepción
+  Wire.onRequest(requestEvent);
   Serial.begin(9600);       // Iniciar comunicación serial para depuración
 }
 
@@ -18,37 +20,59 @@ void loop() {
 }
 
 void receiveEvent(int howMany) {
-  while (Wire.available()) { // Mientras haya datos disponibles
+  while(Wire.available()){
     buttonState = Wire.read(); // Leer el estado del botón
-    Serial.print(buttonState);
-    if (buttonState == 1){
-      startSpace, endSpace = 0;
-      startPressed = millis();
-      while (buttonState == 1){buttonState = Wire.read();}
-      endPressed = millis();
-      int time = endPressed - startPressed;
-      if (time >= pointTime - timeDelta && time<=pointTime+ timeDelta){
-        Serial.print(".");
+    if(!isAChar){
+      if (buttonState == 1){
+        if(!pressed){
+          pressed = true;
+          startPressed = millis(); endPressed = 0;
+          endSpace = millis();
+          
+          int time = endSpace - startSpace;
+          if (time >= pointTime - timeDelta && time<=pointTime+ timeDelta){
+          }
+          else if(time >= 3*(pointTime - timeDelta) && time <= 3*(pointTime + timeDelta)){
+            isAChar = true;
+            delay(100);
+          }
+        }
+      }else{
+        if(pressed){
+          pressed = false;
+          endPressed=millis(); 
+          startSpace=millis(); endSpace = 0;
+          int time = endPressed - startPressed;
+          if (time >= pointTime - timeDelta && time<=pointTime+ timeDelta){
+            strcat(palabra,".");
+            Serial.print(".");
+          }
+          else if(time >= 3*(pointTime - timeDelta) && time <= 3*(pointTime + timeDelta)){
+            strcat(palabra,"-");
+            Serial.print("-");
+          }
+        }
       }
-      else if(time >= 3*(pointTime - timeDelta) && time <= 3*(pointTime + timeDelta)){
-        Serial.print("_");
-      }
-    }else{
-      startPressed, endPressed = 0;
-      startSpace = millis();
-      while (buttonState == 0){buttonState = Wire.read();}
-      endSpace = millis();
-      int time = endSpace - startSpace;
-      if (time >= pointTime - timeDelta && time<=pointTime+ timeDelta){
-        Serial.print("");
-      }
-      else if(time >= 3*(pointTime - timeDelta) && time <= 3*(pointTime + timeDelta)){
-        Serial.print(" ");
-      }
-      
     }
   }
-
-  
 }
 
+void requestEvent(){
+    if (isAChar){
+      Serial.println();
+      Serial.print(palabra);
+      Serial.println();
+      Wire.write(palabra, sizeof(palabra));
+      isAChar = false;
+      strcpy(palabra, "");
+    /*if (!cola.isEmpty()){ 
+      char *c;
+      c = cola.dequeue();
+      Serial.println();
+      Serial.print(c);
+      Serial.println();
+      Wire.write(c, sizeof(c));*/
+    }else{
+      Wire.write("EMPTY", sizeof("EMPTY"));
+    }
+}
