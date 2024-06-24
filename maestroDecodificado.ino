@@ -1,8 +1,9 @@
 #include <Wire.h>
-char letras[] = {'A','B','C','D','E','F','G','H','I','J','K',
-                    'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
-char *morse[] = {".-", "-...", "-.-.",
+String letras[] = {"A","B","C","D","E","F","G","H","I","J","K",
+                    "L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+
+String morse[] = {".-", "-...", "-.-.",
                         "-.." ,".","..-.",
                         "--.","....","..",
                         ".---", "-.-", ".-..",
@@ -13,7 +14,7 @@ char *morse[] = {".-", "-...", "-.-.",
                         "-.--" , "--.." 
 };
 
-
+String receivedString = "";
 
 const int buttonPin = 9; // Pin donde está conectado el botón
 int buttonState = 0;     // Variable para almacenar el estado del botón
@@ -31,35 +32,30 @@ void loop() {
   Wire.beginTransmission(8); // Iniciar transmisión al esclavo con dirección 8
   Wire.write(buttonState);   // Enviar el estado del botón
   Wire.endTransmission();    // Finalizar transmisión
-  char receivedData[6] = "";
-  int index =0;
-  Wire.requestFrom(8, sizeof(receivedData)-1); // Solicita hasta 20 bytes del esclavo con dirección 8
-  while( (Wire.available())) {
-    char buffer = Wire.read();
-    if (buffer >=0){
-      receivedData[index++] = buffer; // Lee cada byte enviado por el esclavo
-    }
+  
+  Wire.requestFrom(8, 20); // Solicita hasta 20 bytes del esclavo con dirección 8
+  if( (Wire.available()) and (c = Wire.read())!=" ") {
+    //c = Wire.read(); // Lee cada byte enviado por el esclavo
+    receivedString += c; // Añade el byte al string
   }
-  receivedData[index]='\0';
-  if(strcmp(receivedData, "EMPTY")!=0){
-    Serial.print(receivedData);
-    Serial.print(" : ");
-    decodificar(receivedData);
+  else if( (Wire.available()) and (c = Wire.read())==" ") {
+    //c = Wire.read(); // Lee cada byte enviado por el esclavo
+    decodificar();
   }
+
+  Serial.println(buttonState); // Imprimir el estado del botón para depuración
 }
 
 
-void decodificar (char *palabra){
-  int i = 0;
-  bool esMorse = false;
-  while(i < 26 && !esMorse ){
-    if(strcmp(palabra,morse[i])==0){
-        Serial.println(letras[i]);
-        esMorse = true;
+void decodificar (){
+  
+    for(int i = 0; i < 26;i++){
+      if(receivedString == morse[i]){
+        Serial.print(letras[i]);
+        break;
+      }
     }
-    i++;
-  }
-  if(!esMorse){
-    Serial.println("No es morse");
-  }
+      delay(200);
+    
+  receivedString = "";
 }

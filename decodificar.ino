@@ -1,8 +1,7 @@
+String texto[] = {"-","---","-...",".-",".-.."," "};
+String palabra = "";
 
-String texto[] = {"-","---","-...",".-",".-.."};
-
-
-String decodificar[] = {".-", "A" , "-..." , "B" , "-.-." , "C",
+String decodifica[] = {".-", "A" , "-..." , "B" , "-.-." , "C",
                         "-..", "D" ,".","E","..-.","F",
                         "--.","G","....","H","..","I",
                         ".---","J", "-.-", "K", ".-..","L",
@@ -38,24 +37,34 @@ void loop()
 {
   // Opcion 1
   /*
-  for(int i = 0; i < 52;i++){
-    if(texto == decodificar[i]){
-      Serial.println(decodificar[i+1]);
+  for(int i = 0; i < 26;i+=2){
+    if(texto == decodifica[i]){
+      Serial.println(decodifica[i+1]);
       break;
       }
     }
 		
   */
   // Opcion 2
-  for (int j = 0; j < 5 ; j++){
+  
+  decodificar();
+}
+
+
+void decodificar (){
+  for (int j = 0; j < 6 ; j++){
     for(int i = 0; i < 26;i++){
       if(texto[j] == morse[i]){
-        Serial.println(letras[i]);
+        //Serial.println(letras[i]);
+        palabra += letras[i];
         break;
       }
-
     }
-    delay(500);
+    if(texto[j] == " "){
+        Serial.println(palabra);
+        palabra = "";
+      }
+      delay(200);
+    
   }
-
 }
