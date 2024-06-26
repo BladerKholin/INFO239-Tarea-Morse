@@ -16,24 +16,28 @@ char *morse[] = {".-", "-...", "-.-.",
 
 
 const int buttonPin = 9; // Pin donde está conectado el botón
+const int slaveDir = 8;
+const int recievePin = 10;
 int buttonState = 0;     // Variable para almacenar el estado del botón
 char c;
 
 void setup() {
   Wire.begin();           // Iniciar como maestro
   pinMode(buttonPin, INPUT); // Configurar el pin del botón como entrada
+  pinMode(recievePin, OUTPUT);
   Serial.begin(9600);     // Iniciar comunicación serial para depuración
 }
 
 void loop() {
+  digitalWrite(recievePin,LOW);
   buttonState = digitalRead(buttonPin); // Leer el estado del botón
   
-  Wire.beginTransmission(8); // Iniciar transmisión al esclavo con dirección 8
+  Wire.beginTransmission(slaveDir); // Iniciar transmisión al esclavo con dirección 8
   Wire.write(buttonState);   // Enviar el estado del botón
   Wire.endTransmission();    // Finalizar transmisión
   char receivedData[6] = "";
   int index =0;
-  Wire.requestFrom(8, sizeof(receivedData)-1); // Solicita hasta 20 bytes del esclavo con dirección 8
+  Wire.requestFrom(slaveDir, sizeof(receivedData)-1); // Solicita hasta 20 bytes del esclavo con dirección 8
   while( (Wire.available())) {
     char buffer = Wire.read();
     if (buffer >=0){
@@ -42,6 +46,8 @@ void loop() {
   }
   receivedData[index]='\0';
   if(strcmp(receivedData, "EMPTY")!=0){
+    digitalWrite(recievePin,HIGH);
+    delay(100);
     Serial.print(receivedData);
     Serial.print(" : ");
     decodificar(receivedData);

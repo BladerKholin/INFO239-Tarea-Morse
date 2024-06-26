@@ -1,18 +1,24 @@
 #include <Wire.h>
 
+const int slaveDir = 8;
+const int LEDPin = 9;
+const int LEDsend = 8;
+
 int buttonState; // Variable para almacenar el estado del botón recibido
-int pointTime = 200;
-int timeDelta = 50;
+const int pointTime = 200;
+const int timeDelta = 50;
 bool pressed = false; bool isAChar = false;
 char palabra[5] = "";
 
 int startPressed, endPressed, startSpace, endSpace = 0;
 
 void setup() {
-  Wire.begin(8);            // Iniciar como esclavo con dirección 8
+  Wire.begin(slaveDir);            // Iniciar como esclavo con dirección 8
   Wire.onReceive(receiveEvent); // Registrar función de recepción
   Wire.onRequest(requestEvent);
   Serial.begin(9600);       // Iniciar comunicación serial para depuración
+  pinMode(LEDPin, OUTPUT);
+  pinMode(LEDsend, OUTPUT);
 }
 
 void loop() {
@@ -24,6 +30,7 @@ void receiveEvent(int howMany) {
     buttonState = Wire.read(); // Leer el estado del botón
     if(!isAChar){
       if (buttonState == 1){
+        digitalWrite(LEDPin, HIGH);
         if(!pressed){
           pressed = true;
           startPressed = millis(); endPressed = 0;
@@ -38,6 +45,7 @@ void receiveEvent(int howMany) {
           }
         }
       }else{
+        digitalWrite(LEDPin, LOW);
         if(pressed){
           pressed = false;
           endPressed=millis(); 
@@ -59,20 +67,18 @@ void receiveEvent(int howMany) {
 
 void requestEvent(){
     if (isAChar){
+      digitalWrite(LEDsend, HIGH);
+      delay(200);
       Serial.println();
+      Serial.print("Morse enviado: ");
       Serial.print(palabra);
       Serial.println();
       Wire.write(palabra, sizeof(palabra));
       isAChar = false;
       strcpy(palabra, "");
-    /*if (!cola.isEmpty()){ 
-      char *c;
-      c = cola.dequeue();
-      Serial.println();
-      Serial.print(c);
-      Serial.println();
-      Wire.write(c, sizeof(c));*/
+      //digitalWrite(LEDsend,LOW);
     }else{
+      digitalWrite(LEDsend, LOW);
       Wire.write("EMPTY", sizeof("EMPTY"));
     }
 }
