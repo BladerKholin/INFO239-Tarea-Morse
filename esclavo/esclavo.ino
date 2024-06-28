@@ -66,7 +66,7 @@ void receiveEvent(int howMany) {
 }
 
 void requestEvent(){
-    if (isAChar){
+    if (isAChar){  // encontró un espacio, entonces se envía la palabra
       digitalWrite(LEDsend, HIGH);
       delay(200);
       Serial.println();
@@ -77,7 +77,7 @@ void requestEvent(){
       isAChar = false;
       strcpy(palabra, "");
       //digitalWrite(LEDsend,LOW);
-    }else{
+    }else{  // si no, envía empty
       digitalWrite(LEDsend, LOW);
       Wire.write("EMPTY", sizeof("EMPTY"));
     }
