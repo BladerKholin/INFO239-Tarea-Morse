@@ -15,7 +15,7 @@ int startPressed, endPressed, startSpace, endSpace = 0;
 void setup() {
   Wire.begin(slaveDir);            // Iniciar como esclavo con dirección 8
   Wire.onReceive(receiveEvent); // Registrar función de recepción
-  Wire.onRequest(requestEvent);
+  Wire.onRequest(requestEvent);  // Registra función de solicitud
   Serial.begin(9600);       // Iniciar comunicación serial para depuración
   pinMode(LEDPin, OUTPUT);
   pinMode(LEDsend, OUTPUT);
@@ -29,7 +29,7 @@ void receiveEvent(int howMany) {
   while(Wire.available()){
     buttonState = Wire.read(); // Leer el estado del botón
     if(!isAChar){
-      if (buttonState == 1){
+      if (buttonState == 1){  // calcular tiempo que no estuvo presionado
         digitalWrite(LEDPin, HIGH);
         if(!pressed){
           pressed = true;
@@ -44,9 +44,9 @@ void receiveEvent(int howMany) {
             delay(100);
           }
         }
-      }else{
+      }else{  
         digitalWrite(LEDPin, LOW);
-        if(pressed){
+        if(pressed){  // calcular tiempo que estuvo presionado
           pressed = false;
           endPressed=millis(); 
           startSpace=millis(); endSpace = 0;
