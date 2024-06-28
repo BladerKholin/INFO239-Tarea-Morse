@@ -45,7 +45,7 @@ void loop() {
     }
   }
 
-  // que hace esto?
+  
   receivedData[index]='\0';
   if(strcmp(receivedData, "EMPTY")!=0){
     digitalWrite(recievePin,HIGH);
