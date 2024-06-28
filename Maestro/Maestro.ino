@@ -44,6 +44,8 @@ void loop() {
       receivedData[index++] = buffer; // Lee cada byte enviado por el esclavo
     }
   }
+
+  // que hace esto?
   receivedData[index]='\0';
   if(strcmp(receivedData, "EMPTY")!=0){
     digitalWrite(recievePin,HIGH);
