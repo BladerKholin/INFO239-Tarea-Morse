@@ -37,13 +37,15 @@ void loop() {
   Wire.endTransmission();    // Finalizar transmisión
   char receivedData[6] = "";
   int index =0;
-  Wire.requestFrom(slaveDir, sizeof(receivedData)-1); // Solicita hasta 20 bytes del esclavo con dirección 8
+  Wire.requestFrom(slaveDir, sizeof(receivedData)-1); // Solicita hasta 20 bytes del esclavo con dirección 8. Siempre pide al esclavo 
   while( (Wire.available())) {
     char buffer = Wire.read();
     if (buffer >=0){
       receivedData[index++] = buffer; // Lee cada byte enviado por el esclavo
     }
   }
+
+  
   receivedData[index]='\0';
   if(strcmp(receivedData, "")!=0){
     digitalWrite(recievePin,HIGH);
