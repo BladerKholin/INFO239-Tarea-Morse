@@ -16,7 +16,7 @@ char *morse[] = {".-", "-...", "-.-.",
 
 
 const int buttonPin = 9; // Pin donde está conectado el botón
-const int slaveDir = 8;
+const int slaveDir = 0x08;
 const int recievePin = 10;
 int buttonState = 0;     // Variable para almacenar el estado del botón
 char c;
@@ -45,13 +45,14 @@ void loop() {
     }
   }
   receivedData[index]='\0';
-  if(strcmp(receivedData, "EMPTY")!=0){
+  if(strcmp(receivedData, "")!=0){
     digitalWrite(recievePin,HIGH);
     delay(100);
     Serial.print(receivedData);
     Serial.print(" : ");
     decodificar(receivedData);
   }
+  delay(200);
 }
 
 

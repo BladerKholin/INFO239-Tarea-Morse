@@ -1,7 +1,6 @@
 {
-    "board": "arduino:avr:diecimila",
-    "port": "COM6",
+    "board": "arduino:avr:uno",
+    "port": "COM3",
     "programmer": "avrisp",
-    "configuration": "cpu=atmega328",
-    "sketch": "esclavo\\esclavo.ino"
+    "sketch": "Parte 2\\transmisor\\transmisor.ino"
 }

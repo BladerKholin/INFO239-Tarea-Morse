@@ -1,6 +1,6 @@
 #include <Wire.h>
 
-const int slaveDir = 8;
+const int slaveDir = 0x08;
 const int LEDPin = 9;
 const int LEDsend = 8;
 
@@ -75,10 +75,10 @@ void requestEvent(){
       Serial.println();
       Wire.write(palabra, sizeof(palabra));
       isAChar = false;
-      strcpy(palabra, "");
+      strncpy(palabra, "",sizeof(palabra));
       //digitalWrite(LEDsend,LOW);
     }else{
       digitalWrite(LEDsend, LOW);
-      Wire.write("EMPTY", sizeof("EMPTY"));
+      //Wire.write("EMPTY", sizeof("EMPTY"));
     }
 }
