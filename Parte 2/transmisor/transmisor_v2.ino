@@ -13,16 +13,16 @@ pin 10 5v
 #include <VirtualWire.h>
 
 
-//String msg = "holachao?juan";
-String msg = "";
-String destino = "";
+String msg = "holaholachaochaocomocomocasacasatrestresprogramagobiernohistoriapersonasadelante";
+//String msg = "";
+String destino = "4";
 bool stringComplete = false;
-int num_paquete = 1;
+
 
 struct Packet {
-    unsigned short origen = 10; // 2 bytes
+    unsigned short origen = 04; // 2 bytes
     unsigned short destino; // 2 bytes
-    unsigned short crc = 0x00; // 2 bytes
+    unsigned short crc= 0x00; // 2 bytes
     unsigned char secuencia; // 1 byte
     unsigned char total;  // 1 byte
     char message[8];  
@@ -32,9 +32,6 @@ struct Packet {
 char paquetesTotales(){
   int total = (((int)msg.length()-1) / 8);
     if((msg.length()-1) % 8 == 0){
-      if(msg.length()-1 == 8){
-        num_paquete = 1;
-      }
       return (char)total;
     }
     else
@@ -42,13 +39,14 @@ char paquetesTotales(){
 }
 
 
-void creaPaquete(String msg2){
+void creaPaquete(String msg2, int num_paquete){
     Packet packet;
     strncpy(packet.message, msg2.c_str(), sizeof(packet.message) );
-    packet.secuencia = (char)(num_paquete++);
     
     packet.total = paquetesTotales();
-
+    
+    packet.secuencia = (char)(num_paquete);
+    
     packet.destino = (unsigned short)(destino.toInt());
     // ENvia paquete
     char charArray[sizeof(Packet)];
@@ -56,7 +54,10 @@ void creaPaquete(String msg2){
     for(int i = 0;i < 8;i++)
       Serial.print(packet.message[i]);
     Serial.println();  
+    
     vw_send((uint8_t *)charArray, sizeof(charArray)); 
+
+    Serial.println(packet.secuencia);
 }
 
 String ingresaTexto(const char* prompt) {
@@ -87,33 +88,37 @@ void setup(){
 }
 
 void loop() {
-  if (destino.length() == 0) {
+  /*if (destino.length() == 0) {
     destino = ingresaTexto("# Ingrese destino: ");
     Serial.print("Destino: " + destino + "\n");
   }
 
   if (msg.length() == 0 && destino.length() > 0) {
     msg = ingresaTexto("# Ingrese mensaje:");
-  }
+  }*/
 
   if (msg.length() > 0 && destino.length() > 0) {
     String msg2 = "";
+    int num_paquete = 0;
     for (int i = 0; i < msg.length(); i++) {
       msg2 += msg[i];
       if (msg2.length() == 8) {
-        creaPaquete(msg2);
+        num_paquete++;
+        creaPaquete(msg2,num_paquete);
         msg2 = "";
       } else if ((msg.length() - i) <= 7 && i == msg.length() - 1) {
-        creaPaquete(msg2);
+        num_paquete++;
+        creaPaquete(msg2,num_paquete);
         msg2 = "";
-        num_paquete = 1; 
+        
       }
     }
     Serial.print("Mensaje con destino a arduino " + destino + " ¡ Ha sido enviado!\n\n");
-    msg = ""; 
-    destino = ""; 
+    //msg = ""; 
+    //destino = ""; 
+    
+  delay(6000);
+}
+}
 
-  delay(1000);
-}
-}
 
