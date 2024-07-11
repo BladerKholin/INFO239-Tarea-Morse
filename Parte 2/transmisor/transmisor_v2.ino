@@ -22,7 +22,7 @@ bool stringComplete = false;
 struct Packet {
     unsigned short origen = 04; // 2 bytes
     unsigned short destino; // 2 bytes
-    unsigned short crc= 0x00; // 2 bytes
+    unsigned short crc= 0x00; // 2 bytes // falta
     unsigned char secuencia; // 1 byte
     unsigned char total;  // 1 byte
     char message[8];  
