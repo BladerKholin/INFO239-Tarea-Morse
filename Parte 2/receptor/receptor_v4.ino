@@ -105,6 +105,9 @@ void loop() {
                 }
                 
     }
+
+    // MODIFICAR grupos[en la posicion] ,se guardar el valor origen del paquete, en este caso el msg es del arduino 4
+    // por eso le puse 4 y no una variable. 
     if(grupos[4] == true && tiempos[4].tiempo_fin   == (unsigned long)millis()){
       Serial.print("Mensaje por tiempo: " + msg + "\n");
       Serial.println(millis());
