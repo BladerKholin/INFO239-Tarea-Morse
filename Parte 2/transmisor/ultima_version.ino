@@ -16,7 +16,7 @@ pin 10 5v
 
 
 
-String msg = "holaholachaochao\n";
+String msg = "holaholachaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochaochao\n";
 //String msg = "";
 String destino = "4";
 bool stringComplete = false;
@@ -124,13 +124,13 @@ void loop() {
   if (msg.length() > 0 && destino.length() > 0) {
     String msg2 = "";
     int num_paquete = 0;
-    for (int i = 0; i < msg.length(); i++) {
+    for (int i = 0; i < msg.length()-1; i++) {
       msg2 += msg[i];
       if (msg2.length() == 8) {
         num_paquete++;
         creaPaquete(msg2,num_paquete);
         msg2 = "";
-      } else if ((msg.length() - i) <= 7 && i == msg.length() - 1) {
+      } else if ((msg.length() - i) <= 7 && i == msg.length() - 2) {
         num_paquete++;
         creaPaquete(msg2,num_paquete);
         msg2 = "";
@@ -141,7 +141,7 @@ void loop() {
     //msg = ""; 
     //destino = ""; 
     
-  delay(10000);
+  delay(26000);
 }
 }
 
