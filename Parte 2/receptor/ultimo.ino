@@ -93,7 +93,8 @@ void loop() {
                 }
 
                 if(num_secuencia == packet.total ){
-                  Serial.print("\n# MENSAJE CORRECTO del grupo " + String(packet.origen) + " ! \n Mensaje completo: ");
+                  Serial.print("\n# MENSAJE CORRECTO del grupo " + String(packet.origen) );
+                  Serial.print( " ! \n Mensaje completo: ");
                   Serial.println(msg);
                   //Serial.print("Cantidad de paquetes recibidos: " + String(num_secuencia) + " \n");
                   Serial.print("\n\n\n");
@@ -107,7 +108,8 @@ void loop() {
                 }
                 else if (packet.destino == broadcast){
                   imprimeDatos(packet);
-                  Serial.print("Mensaje: " + String(packet.message));
+                  Serial.print("Mensaje: ");
+                  Serial.println(String(packet.message));
                 }
                 
     }
@@ -117,11 +119,13 @@ void loop() {
     for(const auto& tuple : tiempos){
         if(grupos[tuple.origen] == true && tuple.tiempo_fin   <= (unsigned long)millis()){
           
-          Serial.print("\n# TIEMPO EXPIRADO! \nMensaje del grupo " + String(tuple.origen) + " : " + msg + "\n");
-          //Serial.println(millis());
+          Serial.print("\n# TIEMPO EXPIRADO! \nMensaje del grupo ");
+          Serial.print(String(tuple.origen));
+          Serial.println(" : " + msg + "\n");
           msg = "";
           grupos[tuple.origen] = false;
-          Serial.print("Cantidad de paquetes recibidos: " + String(num_secuencia) + " \n");
+          Serial.print("Cantidad de paquetes recibidos: ");
+          Serial.print(num_secuencia);
           Serial.print("\n\n\n");
           num_secuencia = 0;
       }
