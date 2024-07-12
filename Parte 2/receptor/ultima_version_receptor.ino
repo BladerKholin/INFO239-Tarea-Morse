@@ -13,6 +13,7 @@ int num_secuencia = 0;
 int tiempo_paquete = 500;
 bool grupos[12] = {false,false,false,false,false,false,false,false,false,false,false,false};
 Tuple tiempos[12]; 
+int origen_recibido = -1;  // recibir de un solo origen
 
 struct Packet {
     unsigned short origen; // 2 bytes
@@ -56,11 +57,11 @@ void loop() {
             memcpy(&packet, buf, sizeof(Packet));
             //int tiempo_mensaje = tiempo_paquete*packet.total;
             if (packet.destino == id_arduino) { 
-                num_secuencia++;
+                
                 imprimeDatos(packet);
                 Serial.print("Mensaje: " + String(packet.message));
-                if( grupos[packet.origen] == false){
-                    
+                if( grupos[packet.origen] == false && origen_recibido == -1){
+                    num_secuencia++;
                     Serial.print("no está\n");
                     grupos[packet.origen] = true;
                     tiempos[packet.origen].origen = packet.origen;
@@ -71,28 +72,30 @@ void loop() {
                     }
                     Serial.println("Llegó un paquete: ");
                       
-                    
+                    origen_recibido = (int)packet.origen;  // guarda origen
                        
                     // Serial.print("Grupo: " + String(tiempos[packet.origen].origen) + " tiempo fin " + String(tiempos[packet.origen].tiempo_fin) + " \n" );     
                 }
                 else{
-                  for (int i = 0; i < 8; i++) {
-                        msg += packet.message[i];
+                    num_secuencia++;
+                    if((int)packet.origen == origen_recibido){
+                          for (int i = 0; i < 8; i++) {
+                            msg += packet.message[i];
+                        }
                     }
-                    
 
                 } 
                 //Serial.println(msg); 
                 imprimeDatos(packet);
                 
-                if(num_secuencia != packet.secuencia) {
+                if(num_secuencia != packet.secuencia && origen_recibido == packet.origen) {
                     Serial.println("Paquete perdido");
                     //Serial.println(num_secuencia);
                     // Añadir marcador de paquete perdido y reiniciar secuencia
                     msg += "####";
                 }
 
-                if(num_secuencia == packet.total ){
+                if(num_secuencia == packet.total && origen_recibido == (int)packet.origen ){
                   Serial.print("\n# MENSAJE CORRECTO del grupo " + String(packet.origen) + " ! \n Mensaje completo: ");
                   Serial.println(msg);
                   //Serial.print("Cantidad de paquetes recibidos: " + String(num_secuencia) + " \n");
@@ -100,6 +103,7 @@ void loop() {
                   msg = "";
                   grupos[packet.origen] = false;
 
+                    origen_recibido = -1;
                   num_secuencia = 0;
                   
                 }
@@ -114,8 +118,8 @@ void loop() {
 
       
     for(const auto& tuple : tiempos){
-        if(grupos[tuple.origen] == true && tuple.tiempo_fin   <= (unsigned long)millis()){
-          
+        if(grupos[tuple.origen] == true && tuple.tiempo_fin   <= (unsigned long)millis() ){
+          if(origen_recibido == (int)tuple.origen){  // quizas cambiar
           Serial.print("\n# TIEMPO EXPIRADO! \nMensaje del grupo " + String(tuple.origen) + " : " + msg + "\n");
           //Serial.println(millis());
           msg = "";
@@ -123,6 +127,8 @@ void loop() {
           Serial.print("Cantidad de paquetes recibidos: " + String(num_secuencia) + " \n");
           Serial.print("\n\n\n");
           num_secuencia = 0;
+              origen_recibido = -1;
+          }
       }
     }
     
